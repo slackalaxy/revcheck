@@ -1,0 +1,18 @@
+#!/bin/bash
+
+RED="\e[31m"
+GREEN="\e[32m"
+END="\e[0m"
+
+PKG="$1"
+
+missing=$(sbbdep "$PKG" | grep -o ":.*" | sed "s|:||g" | sed "s:,::g" |  sed "s: :\n:g" | sort | sed '/^$/d' | uniq)
+#echo $missing
+
+for i in ${missing[@]}; do
+	if grep -q $i $PKG; then
+		echo -e "[${GREEN}FOUND${END}]   $i"
+	else
+		echo -e "[${RED}MISSING${END}] $i"
+	fi
+done
